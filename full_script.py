@@ -16,9 +16,9 @@ with open("books_corrected.csv") as bookmate_data:
 	for line in bookmate_data:
 		sth = line.split(',')
 		name = sth[1].lower()
-		id = sth[0]
+		book_id = sth[0]
 		bookmate_titles.add(name)
-		id_to_name[id] = name
+		id_to_name[book_id] = name
 		if len(sth) >= 3:
 			author = sth[2].lower()
 			b = author.replace(' ', '').replace('"','').replace('ё','е') #унифицируем формат авторов
@@ -31,9 +31,10 @@ with open("catalog.txt") as flibusta_data:
 	flibusta_data.readline()
 	for line in flibusta_data:
 		sth = line.split(';')
-		id = sth[8].replace('\n', '')
-		id_to_name_flibusta[id]= sth[3].lower()
-		flibusta_titles.add(sth[3].lower())
+		book_id = sth[8].replace('\n', '')
+		name = sth[3].lower()
+		id_to_name_flibusta[book_id]= name
+		flibusta_titles.add(name)
 		author= sth[0]
 		b = author.replace(' ', '').replace('"','').replace('ё','е')
 		titles_authors_flibusta[sth[3].lower()] = b.lower()
@@ -50,9 +51,9 @@ with open("bookmate_readers_books.txt") as readers_data:
 	readers_data.readline()
 	for line in readers_data:
 		sth=line.strip().split(' ')
-		id = sth[1]
-		if id in id_to_name:
-			name = (id_to_name[id])
+		book_id = sth[1]
+		if book_id in id_to_name:
+			name = (id_to_name[book_id])
 			reader_related_titles.add(name)
 
 #sorted_books = sorted(top_books.items(), key=operator.itemgetter(1))
