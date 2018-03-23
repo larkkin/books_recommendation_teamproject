@@ -83,12 +83,12 @@ for key in ids_to_download:
 	link = 'http://flibusta.is/b/' + key + '/read'
 	print(link)
 	l = requests.get(link, proxies=proxy).text
-	l = l.replace('\n', ' ').replace('\r', '').replace('\xa0', '')
+	l = l.replace('\n', ' ').replace('\r', '').replace('\xa0', '').replace("'", '')
 	filename = ids_to_download[key]
 	f = open(filename, 'w+')
 	pprint.pprint(l, f) #поместили скачанный файл в созданный, текст
 	with open(filename) as fl:
 		soup = BeautifulSoup(fl, 'html.parser') #теперь наша задача - избавиться от тегов
 		plain_text = filename + 'plain'
-		with open(plain_text, "w+") as file:
-			file.write(soup.get_text())
+		with open(plain_text, "w+") as outfile:
+			outfile.write(soup.get_text().replace("'", ' ').replace("—", "— "))
