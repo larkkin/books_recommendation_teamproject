@@ -5,10 +5,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from string import punctuation
 nltk.download('stopwords')
-nltk.download('reuters')
 from nltk import word_tokenize
 from nltk.corpus import stopwords
-from nltk.corpus import reuters
 import io
 import sys
 import os

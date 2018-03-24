@@ -15,29 +15,31 @@ with open("books_corrected.csv") as bookmate_data:
 	bookmate_data.readline()
 	for line in bookmate_data:
 		sth = line.split(',')
-		name = sth[1].lower()
-		book_id = sth[0]
-		bookmate_titles.add(name)
-		id_to_name[book_id] = name
-		if len(sth) >= 3:
+		if len(sth) >= 5 and sth[5] == 'ru':
+			name = sth[1].lower()
+			book_id = sth[0]
+			bookmate_titles.add(name)
+			id_to_name[book_id] = name
+			#if len(sth) >= 3:
 			author = sth[2].lower()
 			b = author.replace(' ', '').replace('"','').replace('ё','е') #унифицируем формат авторов
 			titles_authors_bookmate[name] = b
-		else:
-			titles_authors_bookmate[name] = ''
+			#else:
+			#	titles_authors_bookmate[name] = ''
 
 
 with open("catalog.txt") as flibusta_data:
 	flibusta_data.readline()
 	for line in flibusta_data:
 		sth = line.split(';')
-		book_id = sth[8].replace('\n', '')
-		name = sth[3].lower()
-		id_to_name_flibusta[book_id]= name
-		flibusta_titles.add(name)
-		author= sth[0]
-		b = author.replace(' ', '').replace('"','').replace('ё','е')
-		titles_authors_flibusta[sth[3].lower()] = b.lower()
+		if sth[5] == 'ru':
+			book_id = sth[8].replace('\n', '')
+			name = sth[3].lower()
+			id_to_name_flibusta[book_id]= name
+			flibusta_titles.add(name)
+			author= sth[0]
+			b = author.replace(' ', '').replace('"','').replace('ё','е')
+			titles_authors_flibusta[sth[3].lower()] = b.lower()
 
 
 
@@ -83,6 +85,7 @@ for key in ids_to_download:
 	link = 'http://flibusta.is/b/' + key + '/read'
 	print(link)
 	l = requests.get(link, proxies=proxy).text
+	#l = '\n'.join(l.split('\n')[20:])
 	l = l.replace('\n', ' ').replace('\r', '').replace('\xa0', '').replace("'", '')
 	filename = ids_to_download[key]
 	f = open(filename, 'w+')
@@ -90,5 +93,9 @@ for key in ids_to_download:
 	with open(filename) as fl:
 		soup = BeautifulSoup(fl, 'html.parser') #теперь наша задача - избавиться от тегов
 		plain_text = filename + 'plain'
+		final_text = (soup.get_text().replace("'", ' ').replace("—", "— "))
+		# final_text = '\n'.join(final_text.split('\n')[:20])
+		final_text = final_text.split('\n')
 		with open(plain_text, "w+") as outfile:
-			outfile.write(soup.get_text().replace("'", ' ').replace("—", "— "))
+			outfile.write('\n'.join(final_text[20:]))
+			# outfile.write(soup.get_text().replace("'", ' ').replace("—", "— "))
