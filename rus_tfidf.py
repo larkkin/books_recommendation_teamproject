@@ -1,15 +1,22 @@
 #! /usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+
 from sklearn.feature_extraction.text import TfidfVectorizer
 import nltk
 from string import punctuation
-nltk.download('stopwords')
 from nltk import word_tokenize
 from nltk.corpus import stopwords
 import io
 import sys
 import os
+
+if len(sys.argv) != 2:
+	print("\tusage: ./rus_tfidf.py <books_dir>")
+	exit()
+
+
+nltk.download('stopwords')
 
 stopWords = stopwords.words('russian')+ list(punctuation) + ["«", "»", "—"]
 
@@ -23,8 +30,10 @@ def tokenize(text):
     words = [w.lower() for w in words]
     return [w for w in words if w not in stopWords and not w.isdigit()]
 
+
 books_dir = sys.argv[1]
 filenames = os.listdir(books_dir)
+filenames.sort()
 texts = [get_text(books_dir+'/'+name) for name in filenames]
 words = [tokenize(l) for l in texts]
 
@@ -47,7 +56,7 @@ with open("./mult.dat", 'w') as otp:
 	for i in range(len(texts)):
 		name = filenames[i]
 		current_vocab = set(words[i])
-		top_words = [(w, X[i, tfidf.vocabulary_[w]]) for w in current_vocab]
+		top_words = [(word_index[w], X[i, tfidf.vocabulary_[w]]) for w in current_vocab]
 		top_words.sort(key=lambda x: x[1])
 		top_10k_words[name] = top_words[-10000:]
 		otp.write("{} ".format(len(words[i])))
